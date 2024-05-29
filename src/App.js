@@ -1,5 +1,14 @@
+import Heading from "./components/Heading";
+
 function App() {
-  return <p> Simple React app.</p>;
+  return (
+    <>
+      <Heading
+        val="This sentence is passed via prop."
+        newval="2 times hierarchy"
+      />
+    </>
+  );
 }
 
 export default App;
