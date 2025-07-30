@@ -10,7 +10,7 @@ function App() {
 
   const handleAddTask = () => {
     if (input.trim() === "") return alert("empty task details");
-    setTasks([...tasks, {title:input, status:'pending'}]);
+    setTasks([...tasks, {title:input, status:'pending', startedAt: Date.now()}]);
     setInput("");
   };
 
@@ -26,7 +26,7 @@ function App() {
   };
   const handleEditTask1 = (index, updatedText) => {
     const updatedTasks = [...tasks];
-    updatedTasks[index] = { ...updatedTasks[index], title: updatedText,};
+    updatedTasks[index] = { ...updatedTasks[index], title: updatedText, updatedAt: Date.now()};
     setTasks(updatedTasks);
     setUpdate(false);
     setUpdateIndex(-1)
@@ -78,6 +78,31 @@ function App() {
           (filtersView === 'all') || (task.status === filtersView) ?
           (<li key={index}>
             {tasks[index].title}
+            {'\t'}
+            <ul>
+              <li>
+                Started at: {new Date(tasks[index].startedAt).toLocaleString('en-IN', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true,
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                })}
+              </li>
+              {task.updatedAt &&
+              <li>
+                 <> Updated at: {new Date(tasks[index].updatedAt).toLocaleString('en-IN', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true,
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                })}</>
+              </li>}
+            </ul>
+            <br/>
             <button onClick={() => handleDeleteTask(index)}>
               {" "}
               Delete task{" "}
@@ -97,6 +122,8 @@ function App() {
                 Completed
               </option>
             </select>
+            <br />
+            <br />
           </li>)
         : <></>))}
       </ul>
