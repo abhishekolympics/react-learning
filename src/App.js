@@ -2,18 +2,19 @@ import { useState } from "react";
 
 function App() {
   const [tasks, setTasks] = useState([]);
+  const [filtersView, setFiltersView] = useState('all');
   const [input, setInput] = useState("");
   const [update, setUpdate] = useState(false);
   const [updateIndex, setUpdateIndex] = useState(-1);
   const [updateValue, setUpdateValue] = useState("");
 
-  const handleAddTask = async () => {
+  const handleAddTask = () => {
     if (input.trim() === "") return alert("empty task details");
-    setTasks([...tasks, input]);
+    setTasks([...tasks, {title:input, status:'pending'}]);
     setInput("");
   };
 
-  const handleDeleteTask = async (index) => {
+  const handleDeleteTask = (index) => {
     const updatedTasks = tasks.filter((_, i) => i !== index);
     setTasks(updatedTasks);
   };
@@ -21,16 +22,22 @@ function App() {
   const handleEditTask = (task, index) => {
     setUpdate(true);
     setUpdateIndex(index);
-    setUpdateValue(task);
+    setUpdateValue(task.title);
   };
-  const handleEditTask1 = async (index, updatedText) => {
+  const handleEditTask1 = (index, updatedText) => {
     const updatedTasks = [...tasks];
-    updatedTasks[index] = updatedText;
+    updatedTasks[index] = { ...updatedTasks[index], title: updatedText,};
     setTasks(updatedTasks);
     setUpdate(false);
     setUpdateIndex(-1)
     setUpdateValue("");
   };
+
+  const handleEditFilter = (index,choice) => {
+    const updatedStatus = [...tasks];
+    updatedStatus[index].status= choice;
+    setTasks(updatedStatus);
+  } 
 
   return (
     <>
@@ -41,7 +48,6 @@ function App() {
           <input
             value={updateValue}
             onChange={(e) => setUpdateValue(e.target.value)}
-            placeholder={tasks[updateIndex]}
           />
           <button onClick={() => handleEditTask1(updateIndex, updateValue)}>Update task</button>
         </>
@@ -56,23 +62,43 @@ function App() {
         </>
       )}
 
+      <select onChange={(e) => {setFiltersView(e.target.value)}}>
+        <option value={'all'}>
+          Show All
+        </option>
+        <option value={'pending'}>
+          Pending
+        </option>
+        <option value={'completed'}>
+          Completed
+        </option>
+      </select>
       <ul>
-        {tasks.map((task, index) => (
-          <li key={index}>
-            {tasks[index]}
+        {tasks.map((task,index) => (
+          (filtersView === 'all') || (task.status === filtersView) ?
+          (<li key={index}>
+            {tasks[index].title}
             <button onClick={() => handleDeleteTask(index)}>
               {" "}
               Delete task{" "}
             </button>
             <button
               onClick={() => {
-                handleEditTask(task, index);
+                handleEditTask(tasks[index], index);
               }}
             >
               Edit
             </button>
-          </li>
-        ))}
+            <select  value={task.status} onChange={(e) => handleEditFilter(index,e.target.value)}>
+              <option value={'pending'} >
+                Pending
+              </option>
+              <option value={'completed'} >
+                Completed
+              </option>
+            </select>
+          </li>)
+        : <></>))}
       </ul>
     </>
   );
