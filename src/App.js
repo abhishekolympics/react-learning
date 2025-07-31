@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+//next thing i have to learn is to store this data in localstorage and then show using useEffect during refresh
 function App() {
   const [tasks, setTasks] = useState([]);
   const [filtersView, setFiltersView] = useState('all');
@@ -7,6 +8,7 @@ function App() {
   const [update, setUpdate] = useState(false);
   const [updateIndex, setUpdateIndex] = useState(-1);
   const [updateValue, setUpdateValue] = useState("");
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   const handleAddTask = () => {
     if (input.trim() === "") return alert("empty task details");
@@ -38,6 +40,20 @@ function App() {
     updatedStatus[index].status= choice;
     setTasks(updatedStatus);
   } 
+  
+  useEffect(() => {
+      const savedTasks = localStorage.getItem("tasks");
+      if(savedTasks) {
+        setTasks(JSON.parse(savedTasks));
+      }
+      setHasLoaded(true);
+  },[]);
+  useEffect(() => {
+    if(hasLoaded)
+      localStorage.setItem("tasks",JSON.stringify(tasks));
+  },[tasks, hasLoaded]);
+
+
 
   return (
     <>
