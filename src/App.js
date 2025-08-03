@@ -1,20 +1,15 @@
 import { useEffect, useState } from "react";
+import TaskForm from "./components/TaskForm";
 
 //next thing i have to learn is to store this data in localstorage and then show using useEffect during refresh
 function App() {
-  const [tasks, setTasks] = useState([]);
+  
   const [filtersView, setFiltersView] = useState('all');
-  const [input, setInput] = useState("");
-  const [update, setUpdate] = useState(false);
-  const [updateIndex, setUpdateIndex] = useState(-1);
-  const [updateValue, setUpdateValue] = useState("");
+  
+  
   const [hasLoaded, setHasLoaded] = useState(false);
 
-  const handleAddTask = () => {
-    if (input.trim() === "") return alert("empty task details");
-    setTasks([...tasks, {title:input, status:'pending', startedAt: Date.now()}]);
-    setInput("");
-  };
+  
 
   const handleDeleteTask = (index) => {
     const updatedTasks = tasks.filter((_, i) => i !== index);
@@ -26,14 +21,7 @@ function App() {
     setUpdateIndex(index);
     setUpdateValue(task.title);
   };
-  const handleEditTask1 = (index, updatedText) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index] = { ...updatedTasks[index], title: updatedText, updatedAt: Date.now()};
-    setTasks(updatedTasks);
-    setUpdate(false);
-    setUpdateIndex(-1)
-    setUpdateValue("");
-  };
+  
 
   const handleEditFilter = (index,choice) => {
     const updatedStatus = [...tasks];
@@ -59,25 +47,7 @@ function App() {
     <>
       <h2> Task Manager</h2>
 
-      {update ? (
-        <>
-          <input
-            value={updateValue}
-            onChange={(e) => setUpdateValue(e.target.value)}
-          />
-          <button onClick={() => handleEditTask1(updateIndex, updateValue)}>Update task</button>
-        </>
-      ) : (
-        <>
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Enter task title"
-          />
-          <button onClick={handleAddTask}>Add task</button>
-        </>
-      )}
-
+      <TaskForm/>
       <select onChange={(e) => {setFiltersView(e.target.value)}}>
         <option value={'all'}>
           Show All
