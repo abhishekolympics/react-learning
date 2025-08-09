@@ -1,26 +1,37 @@
-import { useState } from "react";
-function TaskInput({ update, updateValue, setUpdateValue, onAdd, onEdit }) {
-  const [input, setInput] = useState("");
+import { useContext } from "react";
+import { TaskContext } from "../utils/context";
 
-  return update ? (
-    <>
-      <input value={updateValue} onChange={(e) => setUpdateValue(e.target.value)} />
-      <button onClick={onEdit}>Update task</button>
-    </>
-  ) : (
-    <>
+function TaskInput() {
+  const {
+    update,
+    updateValue,
+    setUpdateValue,
+    updateIndex,
+    handleAddTask,
+    handleEditTaskSubmit,
+  } = useContext(TaskContext);
+
+  const handleClick = () => {
+    if (update) {
+      handleEditTaskSubmit(updateIndex, updateValue);
+    } else {
+      handleAddTask(updateValue);
+    }
+    setUpdateValue("");
+  };
+
+  return (
+    <div>
       <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Enter task title"
+        type="text"
+        value={updateValue}
+        onChange={(e) => setUpdateValue(e.target.value)}
+        placeholder="Enter task"
       />
-      <button onClick={() => {
-        onAdd(input);
-        setInput("");
-      }}>
-        Add task
+      <button onClick={handleClick}>
+        {update ? "Update Task" : "Add Task"}
       </button>
-    </>
+    </div>
   );
 }
 

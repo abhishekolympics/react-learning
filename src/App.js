@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import TaskInput from "./components/TaskInput";
 import TaskList from "./components/TaskList";
 import { loadTasks, saveTasks } from "./utils/localStorage";
+import { TaskContext } from "./utils/context";
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -38,6 +39,7 @@ function App() {
   };
 
   const handleEditTaskSubmit = (index, newTitle) => {
+    if (!newTitle.trim()) return alert("Empty task details");
     const updated = [...tasks];
     updated[index] = {
       ...updated[index],
@@ -57,28 +59,35 @@ function App() {
   };
 
   return (
-    <>
+    <TaskContext.Provider
+      value={{
+        tasks,
+        filtersView,
+        setFiltersView,
+        update,
+        updateIndex,
+        updateValue,
+        setUpdateValue,
+        hasLoaded,
+        handleAddTask,
+        handleEditTaskSubmit,
+        handleDeleteTask,
+        handleEditTask,
+        handleStatusChange,
+      }}
+    >
       <h2>Task Manager</h2>
-      <TaskInput
-        update={update}
-        updateValue={updateValue}
-        setUpdateValue={setUpdateValue}
-        onAdd={handleAddTask}
-        onEdit={() => handleEditTaskSubmit(updateIndex, updateValue)}
-      />
-      <select onChange={(e) => setFiltersView(e.target.value)} value={filtersView}>
+      <TaskInput />
+      <select
+        onChange={(e) => setFiltersView(e.target.value)}
+        value={filtersView}
+      >
         <option value="all">Show All</option>
         <option value="pending">Pending</option>
         <option value="completed">Completed</option>
       </select>
-      <TaskList
-        tasks={tasks}
-        filter={filtersView}
-        onDelete={handleDeleteTask}
-        onEdit={handleEditTask}
-        onStatusChange={handleStatusChange}
-      />
-    </>
+      <TaskList />
+    </TaskContext.Provider>
   );
 }
 

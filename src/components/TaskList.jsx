@@ -1,26 +1,25 @@
+import { useContext } from "react";
 import TaskItem from "./TaskItem";
+import { TaskContext } from "../utils/context";
 
-function TaskList({ tasks, filter, onDelete, onEdit, onStatusChange }) {
+function TaskList() {
+  const { tasks, filtersView } = useContext(TaskContext);
+
   return (
     <ul>
-      {/* This below logic helps in reducing any overheads for time and space complexities.*/}
       {Array.from({ length: tasks.length }, (_, i) => {
         const reversedIndex = tasks.length - 1 - i;
         const task = tasks[reversedIndex];
 
-        if (filter === "all" || task.status === filter) {
+        if (filtersView === "all" || task.status === filtersView) {
           return (
             <TaskItem
               key={reversedIndex}
               task={task}
               index={reversedIndex}
-              onDelete={onDelete}
-              onEdit={onEdit}
-              onStatusChange={onStatusChange}
             />
           );
         }
-
         return null;
       })}
     </ul>

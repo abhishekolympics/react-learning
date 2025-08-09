@@ -1,4 +1,10 @@
-function TaskItem({ task, index, onDelete, onEdit, onStatusChange }) {
+import { useContext } from "react";
+import { TaskContext } from "../utils/context";
+
+function TaskItem({ task, index }) {
+  const { handleDeleteTask, handleEditTask, handleStatusChange } =
+    useContext(TaskContext);
+
   return (
     <li>
       {task.title}
@@ -30,9 +36,12 @@ function TaskItem({ task, index, onDelete, onEdit, onStatusChange }) {
           </li>
         )}
       </ul>
-      <button onClick={() => onDelete(index)}>Delete task</button>
-      <button onClick={() => onEdit(index)}>Edit</button>
-      <select value={task.status} onChange={(e) => onStatusChange(index, e.target.value)}>
+      <button onClick={() => handleDeleteTask(index)}>Delete task</button>
+      <button onClick={() => handleEditTask(index)}>Edit</button>
+      <select
+        value={task.status}
+        onChange={(e) => handleStatusChange(index, e.target.value)}
+      >
         <option value="pending">Pending</option>
         <option value="completed">Completed</option>
       </select>
