@@ -1,13 +1,35 @@
-import { useContext } from "react";
-import { TaskContext } from "../utils/context";
+import { useState } from "react";
+import { memo } from "react";
 
-function TaskItem({ task, index }) {
-  const { handleDeleteTask, handleEditTask, handleStatusChange } =
-    useContext(TaskContext);
+function TaskItem({ task, deleteTask, editTask, updateTask, changeStatus }) {
+  const [tempTitle, setTempTitle] = useState(task.title);
 
   return (
     <li>
-      {task.title}
+      {task.isEditing ? (
+        <input
+          value={tempTitle}
+          onChange={(e) => setTempTitle(e.target.value)}
+          onBlur={() => updateTask(task.id, tempTitle)}
+          autoFocus
+        />
+      ) : (
+        <span>{task.title}</span>
+      )}
+
+      <button onClick={() => deleteTask(task.id)}>Delete</button>
+      {!task.isEditing && (
+        <button onClick={() => editTask(task.id)}>Edit</button>
+      )}
+
+      <select
+        value={task.status}
+        onChange={(e) => changeStatus(task.id, e.target.value)}
+      >
+        <option value="pending">Pending</option>
+        <option value="completed">Completed</option>
+      </select>
+
       <ul>
         <li>
           Started at:{" "}
@@ -36,19 +58,8 @@ function TaskItem({ task, index }) {
           </li>
         )}
       </ul>
-      <button onClick={() => handleDeleteTask(index)}>Delete task</button>
-      <button onClick={() => handleEditTask(index)}>Edit</button>
-      <select
-        value={task.status}
-        onChange={(e) => handleStatusChange(index, e.target.value)}
-      >
-        <option value="pending">Pending</option>
-        <option value="completed">Completed</option>
-      </select>
-      <br />
-      <br />
     </li>
   );
 }
 
-export default TaskItem;
+export default memo(TaskItem);

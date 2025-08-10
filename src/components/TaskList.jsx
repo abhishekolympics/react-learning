@@ -1,27 +1,27 @@
-import { useContext } from "react";
+import { useTaskContext } from "../context/TaskContext";
 import TaskItem from "./TaskItem";
-import { TaskContext } from "../utils/context";
 
 function TaskList() {
-  const { tasks, filtersView } = useContext(TaskContext);
+  const { state, deleteTask, editTask, updateTask, changeStatus } =
+    useTaskContext();
+
+  const filteredTasks =
+    state.filter === "all"
+      ? state.tasks
+      : state.tasks.filter((task) => task.status === state.filter);
 
   return (
     <ul>
-      {Array.from({ length: tasks.length }, (_, i) => {
-        const reversedIndex = tasks.length - 1 - i;
-        const task = tasks[reversedIndex];
-
-        if (filtersView === "all" || task.status === filtersView) {
-          return (
-            <TaskItem
-              key={reversedIndex}
-              task={task}
-              index={reversedIndex}
-            />
-          );
-        }
-        return null;
-      })}
+      {[...filteredTasks].reverse().map((task) => (
+        <TaskItem
+          key={task.id}
+          task={task}
+          deleteTask={deleteTask}
+          editTask={editTask}
+          updateTask={updateTask}
+          changeStatus={changeStatus}
+        />
+      ))}
     </ul>
   );
 }
