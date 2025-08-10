@@ -19,23 +19,6 @@ function TaskInput() {
       >
         Add
       </button>
-
-      {/* Filter Buttons */}
-      <div>
-        <button onClick={() => dispatch({ type: "SET_FILTER", payload: "all" })}>
-          All
-        </button>
-        <button
-          onClick={() => dispatch({ type: "SET_FILTER", payload: "pending" })}
-        >
-          Pending
-        </button>
-        <button
-          onClick={() => dispatch({ type: "SET_FILTER", payload: "completed" })}
-        >
-          Completed
-        </button>
-      </div>
     </div>
   );
 }
