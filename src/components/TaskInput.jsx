@@ -1,20 +1,20 @@
-import { useTaskContext } from "../context/TaskContext";
+import { useSelector, useDispatch } from "react-redux";
+import { setInput, addTask } from "../features/taskSlice";
 
 function TaskInput() {
-  const { state, dispatch } = useTaskContext();
+  const inputValue = useSelector((state) => state.tasks.inputValue);
+  const dispatch = useDispatch();
 
   return (
     <div>
       <input
-        value={state.inputValue}
-        onChange={(e) =>
-          dispatch({ type: "SET_INPUT", payload: e.target.value })
-        }
+        value={inputValue}
+        onChange={(e) => dispatch(setInput(e.target.value))}
       />
       <button
         onClick={() => {
-          if (state.inputValue.trim() === "") return;
-          dispatch({ type: "ADD_TASK", payload: state.inputValue.trim() });
+          if (inputValue.trim() === "") return;
+          dispatch(addTask(inputValue.trim()));
         }}
       >
         Add

@@ -1,36 +1,33 @@
-import { useTaskContext } from "../context/TaskContext";
+import { useSelector, useDispatch } from "react-redux";
 import TaskItem from "./TaskItem";
-import { useMemo } from "react";
+import { setFilter, deleteTask, editTask, updateTask, changeStatus } from "../features/taskSlice";
+import { useMemo, useEffect } from "react";
 
 function TaskList() {
-  const { state, dispatch, deleteTask, editTask, updateTask, changeStatus } = useTaskContext();
+  const { tasks, filter } = useSelector((state) => state.tasks);
+  const dispatch = useDispatch();
 
-  // Memoized filtered + sorted tasks
+  // Save to localStorage when tasks change
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
+  // Memoized filter + sort
   const filteredTasks = useMemo(() => {
-    let tasksCopy = [...state.tasks];
-
-    // Filter by status
-    if (state.filter !== "all") {
-      tasksCopy = tasksCopy.filter(task => task.status === state.filter);
+    let tasksCopy = [...tasks];
+    if (filter !== "all") {
+      tasksCopy = tasksCopy.filter((task) => task.status === filter);
     }
-
-    // Sort newest first
     return tasksCopy.sort((a, b) => new Date(b.startedAt) - new Date(a.startedAt));
-  }, [state.tasks, state.filter]);
+  }, [tasks, filter]);
 
   return (
     <div>
       {/* Filter buttons */}
       <div>
-        <button onClick={() => dispatch({ type: "SET_FILTER", payload: "all" })}>
-          All
-        </button>
-        <button onClick={() => dispatch({ type: "SET_FILTER", payload: "pending" })}>
-          Pending
-        </button>
-        <button onClick={() => dispatch({ type: "SET_FILTER", payload: "completed" })}>
-          Completed
-        </button>
+        <button onClick={() => dispatch(setFilter("all"))}>All</button>
+        <button onClick={() => dispatch(setFilter("pending"))}>Pending</button>
+        <button onClick={() => dispatch(setFilter("completed"))}>Completed</button>
       </div>
 
       {/* Task list */}
@@ -39,10 +36,10 @@ function TaskList() {
           <TaskItem
             key={task.id}
             task={task}
-            deleteTask={deleteTask}
-            editTask={editTask}
-            updateTask={updateTask}
-            changeStatus={changeStatus}
+            deleteTask={(id) => dispatch(deleteTask(id))}
+            editTask={(id) => dispatch(editTask(id))}
+            updateTask={(id, title) => dispatch(updateTask({ id, title }))}
+            changeStatus={(id, status) => dispatch(changeStatus({ id, status }))}
           />
         ))}
       </ul>
